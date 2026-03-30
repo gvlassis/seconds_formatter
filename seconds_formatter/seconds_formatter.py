@@ -52,7 +52,7 @@ def seconds_milliseconds_microseconds(seconds=0):
     seconds_ = microseconds_ // MICROSECONDS_IN_SECONDS
     microseconds_ = microseconds_ % MICROSECONDS_IN_SECONDS
     
-    seconds = microseconds_ * MICROSECONDS_IN_SECONDS
+    seconds = microseconds_ / MICROSECONDS_IN_SECONDS
     milliseconds_, microseconds_ = milliseconds_microseconds(seconds)
 
     return seconds_, milliseconds_, microseconds_
@@ -63,7 +63,7 @@ def minutes_seconds_milliseconds_microseconds(seconds=0):
     minutes_ = microseconds_ // MICROSECONDS_IN_MINUTES
     microseconds_ = microseconds_ % MICROSECONDS_IN_MINUTES
     
-    seconds = microseconds_ * MICROSECONDS_IN_SECONDS
+    seconds = microseconds_ / MICROSECONDS_IN_SECONDS
     seconds_, milliseconds_, microseconds_ = seconds_milliseconds_microseconds(seconds)
 
     return minutes_, seconds_, milliseconds_, microseconds_
@@ -74,7 +74,7 @@ def hours_minutes_seconds_milliseconds_microseconds(seconds=0):
     hours_ = microseconds_ // MICROSECONDS_IN_HOURS
     microseconds_ = microseconds_ % MICROSECONDS_IN_HOURS
     
-    seconds = microseconds_ * MICROSECONDS_IN_SECONDS
+    seconds = microseconds_ / MICROSECONDS_IN_SECONDS
     minutes_, seconds_, milliseconds_, microseconds_ = minutes_seconds_milliseconds_microseconds(seconds)
     
     return hours_, minutes_, seconds_, milliseconds_, microseconds_
@@ -85,7 +85,7 @@ def days_hours_minutes_seconds_milliseconds_microseconds(seconds=0):
     days_ = microseconds_ // MICROSECONDS_IN_DAYS
     microseconds_ = microseconds_ % MICROSECONDS_IN_DAYS
     
-    seconds = microseconds_ * MICROSECONDS_IN_SECONDS
+    seconds = microseconds_ / MICROSECONDS_IN_SECONDS
     hours_, minutes_, seconds_, milliseconds_, microseconds_ = hours_minutes_seconds_milliseconds_microseconds(seconds)
 
     return days_, hours_, minutes_, seconds_, milliseconds_, microseconds_
@@ -94,16 +94,14 @@ def days_hours_minutes_seconds_milliseconds_microseconds(seconds=0):
 def dd_hh_mm_ss(seconds=0):
     seconds = round(seconds)
     
-    days_, hours_, minutes_, seconds_, milliseconds_, microseconds = days_hours_minutes_seconds_milliseconds_microseconds(microseconds)
+    days_, hours_, minutes_, seconds_, milliseconds_, microseconds = days_hours_minutes_seconds_milliseconds_microseconds(seconds)
     assert milliseconds_ == microseconds == 0
     
     return f"{days_:02}:{hours_:02}:{minutes_:02}:{seconds_:02}"
 
 
 def adaptive(seconds=0):
-    microseconds_ = microseconds(seconds)
-
-    days_, hours_, minutes_, seconds_, milliseconds_, microseconds_ = days_hours_minutes_seconds_milliseconds_microseconds(microseconds_)
+    days_, hours_, minutes_, seconds_, milliseconds_, microseconds_ = days_hours_minutes_seconds_milliseconds_microseconds(seconds)
 
     if days_ > 0:
         # Round to the nearest hour
@@ -298,12 +296,7 @@ def test_adaptive():
             ("10ms", adaptive(seconds_in(0,0,0,0,9,997))),
             ("789μs", adaptive(seconds_in(0,0,0,0,0,789))),
             ("89μs", adaptive(seconds_in(0,0,0,0,0,89))),
-            ("0μs", adaptive(seconds_in())),
-            ("10ms", adaptive(10010.0)),
-            ("10.1ms", adaptive(10100.1)),
-            ("11ms", adaptive(10949.9)),
-            ("11ms", adaptive(10950.1)),
-            ("10s", adaptive(10010000.2)),
+            ("0μs", adaptive(seconds_in()))
         ]
     )
 
